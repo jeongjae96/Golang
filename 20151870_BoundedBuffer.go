@@ -9,7 +9,7 @@ import (
 const BUFSIZE int = 5
 const MAXDATA int = 100
 
-func producer(buffer chan int, done chan bool) {
+func producer(buffer chan int) {
 	for value := 1; value <= MAXDATA; value++{ 
 
 		time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
@@ -18,7 +18,6 @@ func producer(buffer chan int, done chan bool) {
 		buffer <- value
 		fmt.Printf("Producer< %d\n", value)
 	}
-	done <- true
 }
 
 func consumer(buffer chan int) {
@@ -34,12 +33,10 @@ func consumer(buffer chan int) {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	//rand.Seed(time.Now().UnixNano())
 
 	buffer := make(chan int, BUFSIZE)
-	done := make(chan bool)
 
-	go producer(buffer, done)
+	go producer(buffer)
 	consumer(buffer)
-	<-done
 }
